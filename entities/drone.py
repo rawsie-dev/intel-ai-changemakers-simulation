@@ -1,5 +1,5 @@
 from pygame.math import Vector2
-from core.constants import WORLD_WIDTH
+from core.constants import (WORLD_WIDTH, DRONE_SPEED)
 
 class Drone:
 
@@ -9,7 +9,7 @@ class Drone:
 
         self.direction = Vector2(1, 0)
 
-        self.speed = 220
+        self.speed = DRONE_SPEED
 
     def update(self, dt):
 

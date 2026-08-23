@@ -7,6 +7,7 @@ from entities.house import House
 from world.terrain import Terrain
 from world.flood import Flood
 from world.roads import Roads
+from core.constants import NUM_HOUSES
 
 from ai.hvi import HVI
 
@@ -23,7 +24,7 @@ class Commune:
 
         self.houses = []
 
-        for _ in range(250):
+        for _ in range(NUM_HOUSES):
 
             road = choice(self.roads.roads)
 
@@ -45,7 +46,7 @@ class Commune:
 
             house = House((wx, wy))
 
-            house.hvi = HVI.compute(house)
+            # house.hvi = HVI.compute(house)
 
             self.houses.append(house)
 
@@ -66,6 +67,8 @@ class Commune:
 
                 house.wait_time += dt
 
+                house.update_needs()
+
                 if (
                     house.flood_depth > 0.2
                     or (
@@ -76,10 +79,5 @@ class Commune:
                     house.emergency = True
                 else:
                     house.emergency = False
-
-            else:
-
-                house.wait_time = 0
-                house.emergency = False
                 
-            house.beacon.update(house)
+            house.update_beacons()

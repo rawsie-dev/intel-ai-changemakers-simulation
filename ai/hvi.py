@@ -12,8 +12,8 @@ class HVI:
         if house.disabled:
             score += 0.25
 
-        if house.medical:
-            score += 0.30
+        # if house.medical:
+        #     score += 0.30
 
         if house.stories == 1:
             score += 0.20

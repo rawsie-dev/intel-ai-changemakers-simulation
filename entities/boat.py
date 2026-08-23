@@ -1,15 +1,13 @@
 from pygame.math import Vector2
 
+from core.constants import BOAT_SPEED
+
 
 class Boat:
-
     def __init__(self, pos):
-
         self.position = Vector2(pos)
-
         self.target = None
-
-        self.speed = 120
+        self.speed = BOAT_SPEED
 
     def update(self, dt):
 

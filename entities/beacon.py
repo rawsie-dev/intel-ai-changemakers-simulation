@@ -1,50 +1,103 @@
 class Beacon:
 
-    STATES = (
+    PEOPLE_STATES = (
         "GREEN",
-        "YELLOW",
+        "BLUE",
         "RED",
-        "WHITE",
     )
 
-    def __init__(self):
+    WATER_STATES = (
+        "WHITE",
+        "GREEN",
+        "BLUE",
+        "RED",
+    )
 
-        self.state = "GREEN"
+    REQUEST_STATES = (
+        "WHITE",
+        "CYAN",
+        "YELLOW",
+        "MAGENTA",
+    )
+
+    def __init__(self, beacon_type):
+
+        self.type = beacon_type
+
+        if beacon_type == "WATER":
+            self.state = "WHITE"
+
+        elif beacon_type == "REQUEST":
+            self.state = "WHITE"
+
+        else:
+            self.state = "GREEN"
 
     def update(self, house):
 
-        if house.rescued:
+        if self.type == "PEOPLE":
+            self.update_people(house)
+
+        elif self.type == "WATER":
+            self.update_water(house)
+
+        elif self.type == "REQUEST":
+            self.update_request(house)
+
+    def update_people(self, house):
+
+        if house.people <= 2:
             self.state = "GREEN"
-            return
 
-        if house.emergency:
-
-            if house.medical or house.flood_depth > 0.8:
-                self.state = "RED"
-            else:
-                self.state = "YELLOW"
+        elif house.people <= 4:
+            self.state = "BLUE"
 
         else:
+            self.state = "RED"
 
+    def update_water(self, house):
+
+        depth = house.flood_depth
+
+        # No water
+        if depth <= 0:
+            self.state = "WHITE"
+
+        # Low water
+        elif depth < 0.25:
             self.state = "GREEN"
+
+        # Moderate water
+        elif depth < 0.5:
+            self.state = "BLUE"
+
+        # High water
+        else:
+            self.state = "RED"
+
+    def update_request(self, house):
+
+        if house.flood_depth <= 0:
+            self.state = "WHITE"
+            return
+
+        if house.needs_medical:
+            self.state = "MAGENTA"
+
+        elif house.needs_clothes:
+            self.state = "YELLOW"
+
+        elif house.needs_food:
+            self.state = "CYAN"
+
+        else:
+            self.state = "WHITE"
 
     def is_on(self, time):
 
-        t = time % 1.0
+        # All states are illuminated,
+        # except MAGENTA which blinks.
+        if self.state == "MAGENTA":
+            return ((time*4) % 1.0) < 0.5
 
-        if self.state == "GREEN":
-            return True
-
-        if self.state == "YELLOW":
-            return t < 0.5
-
-        if self.state == "RED":
-            return (time * 4) % 1 < 0.5
-
-        if self.state == "WHITE":
-            return (
-                t < 0.15
-                or 0.3 < t < 0.45
-            )
-
-        return False
+        return True
